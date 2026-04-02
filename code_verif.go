@@ -2,7 +2,6 @@ package codeverif
 
 import (
 	"crypto/rand"
-	"errors"
 	"fmt"
 	"math/big"
 	"time"
@@ -36,7 +35,7 @@ func (thiz *VerifCode) RequestCode(userID string) (string, error) {
 	}
 	err = thiz.cache.Add(userID, rec, thiz.expiry)
 	if err != nil {
-		return "", errors.New("request throttled; wait before requesting another code")
+		return "", ErrThrottled
 	}
 
 	return code, nil
@@ -49,7 +48,7 @@ func (thiz *VerifCode) VerifyCode(userID, code string) error {
 
 	val, expiration, ok := thiz.cache.GetWithExpiration(userID)
 	if !ok {
-		return errors.New("code expired")
+		return ErrCodeExpired
 	}
 	rec := val.(*record) //nolint:forcetypeassert
 
@@ -57,17 +56,17 @@ func (thiz *VerifCode) VerifyCode(userID, code string) error {
 	rec.LastAttemptAt = time.Now().UTC()
 	d := time.Until(expiration)
 	if d <= 0 {
-		return errors.New("code expired")
+		return ErrCodeExpired
 	}
 	err := thiz.cache.Replace(userID, rec, time.Until(expiration))
 	if err != nil {
 		return err
 	}
 	if rec.Attempts > thiz.maxAttempts {
-		return errors.New("too many attempts")
+		return ErrTooManyAttempts
 	}
 	if rec.Code != code {
-		return errors.New("invalid code")
+		return ErrInvalidCode
 	}
 	thiz.cache.Delete(userID)
 
@@ -78,7 +77,7 @@ func (thiz *VerifCode) VerifyCode(userID, code string) error {
 
 func generateNumericCode(n int) (string, error) {
 	if n <= 2 {
-		return "", errors.New("invalid code length")
+		return "", ErrInvalidLength
 	}
 	maximum := new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(n)), nil) // 10^n
 	num, err := rand.Int(rand.Reader, maximum)
