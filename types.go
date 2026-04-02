@@ -1,6 +1,7 @@
 package codeverif
 
 import (
+	"sync"
 	"time"
 
 	"github.com/patrickmn/go-cache"
@@ -12,6 +13,7 @@ type VerifCode struct {
 	expiry      time.Duration // how long codes are valid
 	maxAttempts int           // allowed wrong attempts before lock
 	cache       *cache.Cache
+	mu          sync.Mutex
 }
 
 // record represents a stored code.

@@ -22,6 +22,9 @@ func New(codeLength int, expiry time.Duration, maxAttempts int) *VerifCode {
 
 // RequestCode generates a code for a given userID and save it for expiry duration.
 func (thiz *VerifCode) RequestCode(userID string) (string, error) {
+	thiz.mu.Lock()
+	defer thiz.mu.Unlock()
+
 	code, err := generateNumericCode(thiz.codeLength)
 	if err != nil {
 		return "", err
@@ -41,6 +44,9 @@ func (thiz *VerifCode) RequestCode(userID string) (string, error) {
 
 // VerifyCode checks the submitted code. On success it deletes the stored code.
 func (thiz *VerifCode) VerifyCode(userID, code string) error {
+	thiz.mu.Lock()
+	defer thiz.mu.Unlock()
+
 	val, expiration, ok := thiz.cache.GetWithExpiration(userID)
 	if !ok {
 		return errors.New("code expired")
