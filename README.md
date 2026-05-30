@@ -2,6 +2,7 @@
 
 [![Go Version](https://img.shields.io/badge/Go-1.23%2B-blue)](https://go.dev/)
 [![Test Status](https://github.com/alex-cos/codeverif/actions/workflows/test.yml/badge.svg)](https://github.com/alex-cos/codeverif/actions/workflows/test.yml)
+[![Codecov](https://codecov.io/gh/alex-cos/codeverif/branch/main/graph/badge.svg)](https://codecov.io/gh/alex-cos/codeverif)
 [![Lint Status](https://github.com/alex-cos/codeverif/actions/workflows/lint.yml/badge.svg)](https://github.com/alex-cos/codeverif/actions/workflows/lint.yml)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/alex-cos/codeverif)](https://goreportcard.com/report/github.com/alex-cos/codeverif)
